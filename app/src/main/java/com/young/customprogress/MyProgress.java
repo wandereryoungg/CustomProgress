@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -26,7 +27,7 @@ public class MyProgress extends View {
     private int mViewHeight;
 
     private float mProgress;
-    private float currentProgress;
+    private float currentProgress =30;
 
     private ValueAnimator progressAnimator;
 
@@ -38,7 +39,7 @@ public class MyProgress extends View {
     private int progressMarginTop;
     private int roundRect;
     private int textPaintSize;
-    private float moveDis;
+    private float moveDis = 20;
 
     private Path path = new Path();
     private RectF rectF = new RectF();
@@ -48,11 +49,13 @@ public class MyProgress extends View {
 
     public MyProgress(Context context) {
         super(context);
+        init();
         initPaint();
     }
 
     public MyProgress(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
         initPaint();
     }
 
@@ -71,6 +74,8 @@ public class MyProgress extends View {
         roundRect = dp2px(2);
         progressMarginTop = dp2px(8);
         textPaintSize = sp2px(10);
+
+        Log.d("young","tipwidth: "+tipWidth);
 
     }
 
