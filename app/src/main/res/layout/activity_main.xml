@@ -7,10 +7,12 @@
     tools:context=".MainActivity">
 
     <com.young.customprogress.MyProgress
+        android:id="@+id/my_progress"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:text="Hello World!"
-        android:layout_marginTop="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

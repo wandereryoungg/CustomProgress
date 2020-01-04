@@ -12,8 +12,11 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 import androidx.annotation.Nullable;
+
+import java.text.DecimalFormat;
 
 public class MyProgress extends View {
 
@@ -27,9 +30,12 @@ public class MyProgress extends View {
     private int mViewHeight;
 
     private float mProgress;
-    private float currentProgress =30;
+    private float currentProgress;
+    private int duration = 10000;
+    private int startDelay = 10000;
 
     private ValueAnimator progressAnimator;
+    private ProgressListener progressListener;
 
     private int progressPaintWidth;
     private int tipPaintWidth;
@@ -39,7 +45,7 @@ public class MyProgress extends View {
     private int progressMarginTop;
     private int roundRect;
     private int textPaintSize;
-    private float moveDis = 20;
+    private float moveDis;
 
     private Path path = new Path();
     private RectF rectF = new RectF();
@@ -176,5 +182,60 @@ public class MyProgress extends View {
     }
     private int sp2px(int sp){
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,sp,getResources().getDisplayMetrics());
+    }
+
+    public MyProgress setProgressWithAnimation(float progress){
+        mProgress = progress;
+        initAnimation();
+        return this;
+    }
+
+    private void initAnimation(){
+        progressAnimator = ValueAnimator.ofFloat(0,mProgress);
+        progressAnimator.setDuration(duration);
+        progressAnimator.setStartDelay(startDelay);
+        progressAnimator.setInterpolator(new LinearInterpolator());
+        progressAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                textString = formatNum(value);
+                currentProgress = value*mWidth/100;
+                if(progressListener !=null){
+                    progressListener.currentProgressListener(currentProgress);
+                }
+                if(currentProgress >=(tipWidth/2) && currentProgress<= mWidth-(tipWidth/2)){
+                    moveDis = currentProgress-(tipWidth/2);
+                }
+                invalidate();
+                //setCurrentProgress(value);
+            }
+        });
+        progressAnimator.start();
+    }
+
+    public interface ProgressListener{
+        void currentProgressListener(float currentProgress);
+    }
+
+    public MyProgress setProgressListener(ProgressListener listener){
+        progressListener = listener;
+        return this;
+    }
+
+    public MyProgress setCurrentProgress(float progress){
+        mProgress = progress;
+        currentProgress = mProgress*mWidth/100;
+        textString = formatNum(mProgress);
+        if(currentProgress >=(tipWidth/2) && currentProgress<= mWidth-(tipWidth/2)){
+            moveDis = currentProgress-(tipWidth/2);
+        }
+        invalidate();
+        return this;
+    }
+
+    public static String formatNum(float progress){
+        DecimalFormat decimalFormat = new DecimalFormat("0");
+        return  decimalFormat.format(progress);
     }
 }
